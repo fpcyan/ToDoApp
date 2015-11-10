@@ -5,3 +5,11 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+
+Todo.destroy_all
+
+todos = []
+10.times do |i|
+  todos << Todo.create!(title: "#{i}th Title", body: "#{i}th Body blah blah", done: false)
+end
