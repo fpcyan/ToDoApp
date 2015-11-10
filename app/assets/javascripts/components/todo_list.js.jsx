@@ -48,6 +48,26 @@ var TodoListItem = React.createClass({
         <div className="list-item-title">{this.props.todo.title}</div>
         <div className="list-item-body">{this.props.todo.body}</div>
         <button onClick={this.handleDestroy} >Delete Item</button>
+        <DoneButton todo={this.props.todo} />
+      </div>
+    );
+  }
+});
+
+var DoneButton = React.createClass({
+
+  handleDone: function (e) {
+    e.preventDefault();
+    TodoStore.toggleDone(this.props.todo.id);
+
+  },
+
+  render: function () {
+
+    var text = (this.props.todo.done) ? "Undo" : "Done";
+    return (
+      <div>
+        <button onClick={this.handleDone}>{ text }</button>
       </div>
     );
   }
