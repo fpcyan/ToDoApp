@@ -61,9 +61,21 @@ var TodoListItem = React.createClass({
 });
 
 var ItemDetailView = React.createClass({
+
   getInitialState: function () {
 
-    return ({ stepList: StepStore.all(this.props.todo.id) });
+    return ({ stepList: StepStore.all(this.props.todo.id), stepContent: "" });
+  },
+
+  handleStepContentInput: function (e) {
+    e.preventDefault();
+    this.setState({ stepContent: e.currentTarget.value });
+  },
+
+  handleStepSubmit: function (e) {
+    e.preventDefault();
+    StepStore.create( { content: this.state.stepContent, done: false }, this.props.todo.id);
+    this.setState({ stepContent: "" });
   },
 
   stepListChanged: function () {
@@ -105,6 +117,10 @@ var ItemDetailView = React.createClass({
             })
           }
         </div>
+        <form onSubmit={this.handleStepSubmit} className="step-form">
+          <input type="text" onInput={this.handleStepContentInput} value={this.state.stepContent} />
+          <button>Add Step</button>
+        </form>
       </div>
     );
   }
