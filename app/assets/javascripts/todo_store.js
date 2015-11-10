@@ -37,7 +37,6 @@
   };
 
   TodoStore.create = function (todo) {
-    // is data parsed already?
     $.ajax({
       url: '/api/todos',
       type: 'POST',
@@ -60,7 +59,6 @@
         url: '/api/todos/' + id,
         type: 'DELETE',
         dataType: 'json',
-        data: { id: id },
         success: function (data) {
           var idx = _todos.indexOf(toRemove);
           _todos.splice(idx);
@@ -75,16 +73,18 @@
     var toUpdate = _todos.filter( function(todo) {
       return todo.id === id;
     });
+    var toDo = toUpdate[0];
     $.ajax({
       url: '/api/todos/' + id,
       type: 'PATCH',
       dataType: 'json',
-      data: { id: id, todo: { done: !toUpdate[0].done }},
+      data: { todo: { done: !toDo.done }},
       success: function (data) {
+        toDo.done = !toDo.done;
         TodoStore.changed();
       }
     });
-  }
+  };
 
 
 })(this);
