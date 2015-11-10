@@ -37,18 +37,41 @@ var TodoList = React.createClass({
 
 var TodoListItem = React.createClass({
 
+  getInitialState: function () {
+    return { detail: false };
+  },
+
+  changeDetails: function () {
+    this.setState({ detail: !this.state.detail });
+  },
+
+  render: function() {
+    var details;
+    if (this.state.detail) {
+      details = <ItemDetailView todo={this.props.todo}/>;
+    }
+    return(
+      <div className="list-item">
+        <div className="list-item-title" onClick={this.changeDetails}>{this.props.todo.title}</div>
+        <DoneButton todo={this.props.todo} />
+        {details}
+      </div>
+    );
+  }
+});
+
+var ItemDetailView = React.createClass({
+
   handleDestroy: function (e) {
     e.preventDefault();
     TodoStore.destroy(this.props.todo.id);
   },
 
-  render: function() {
+  render: function () {
     return(
-      <div className="list-item">
-        <div className="list-item-title">{this.props.todo.title}</div>
+      <div>
         <div className="list-item-body">{this.props.todo.body}</div>
-        <button onClick={this.handleDestroy} >Delete Item</button>
-        <DoneButton todo={this.props.todo} />
+        <button onClick={this.handleDestroy}>Delete Item</button>
       </div>
     );
   }
