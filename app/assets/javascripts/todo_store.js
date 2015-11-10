@@ -53,15 +53,15 @@
     var toRemove = _todos.filter( function(todo) {
       return todo.id === id;
     });
-
+    var toDo = toRemove[0];
     if (toRemove.length > 0) {
       $.ajax({
         url: '/api/todos/' + id,
         type: 'DELETE',
         dataType: 'json',
         success: function (data) {
-          var idx = _todos.indexOf(toRemove);
-          _todos.splice(idx);
+          var idx = _todos.indexOf(toDo);
+          _todos.splice(idx, 1);
           TodoStore.changed();
         }
       });
@@ -69,7 +69,6 @@
   };
 
   TodoStore.toggleDone = function(id) {
-    // debugger;
     var toUpdate = _todos.filter( function(todo) {
       return todo.id === id;
     });
