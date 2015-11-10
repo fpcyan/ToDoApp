@@ -20,15 +20,12 @@ var TodoList = React.createClass({
 
   render: function () {
     return (
-      <div>
-        <TodoForm />
-        <div>
-          {
-            this.state.todoList.map( function (todo) {
-              return <TodoListItem key={todo.title} todo={todo} />;
-            })
-          }
-        </div>
+      <div className="sidebar todo-list">
+        {
+          this.state.todoList.map( function (todo) {
+            return <TodoListItem key={todo.title} todo={todo} />;
+          })
+        }
       </div>
     );
   }
@@ -48,19 +45,20 @@ var TodoListItem = React.createClass({
   render: function() {
     var details;
     if (this.state.detail) {
-      details = <ItemDetailView todo={this.props.todo}/>;
+      details = <MainView todo={this.props.todo}/>;
     }
     return(
       <div className="list-item">
         <div className="list-item-title" onClick={this.changeDetails}>{this.props.todo.title}</div>
         <DoneButton obj={this.props.todo} objName={"todo"} />
+
         {details}
       </div>
     );
   }
 });
 
-var ItemDetailView = React.createClass({
+var MainView = React.createClass({
 
   getInitialState: function () {
 
@@ -91,7 +89,7 @@ var ItemDetailView = React.createClass({
     StepStore.removeChangedHandler(this.stepListChanged);
   },
 
-  handleDestroy: function (e) {
+  handleListItemDestroy: function (e) {
     e.preventDefault();
     TodoStore.destroy(this.props.todo.id);
   },
@@ -99,9 +97,11 @@ var ItemDetailView = React.createClass({
   render: function () {
 
     return(
-      <div>
+      <div className="main">
+        <div className="list-item-title" onClick={this.changeDetails}>{this.props.todo.title}</div>
         <div className="list-item-body">{this.props.todo.body}</div>
-        <button onClick={this.handleDestroy}>Delete Item</button>
+        <button onClick={this.handleListItemDestroy}>Delete Item</button>
+        <DoneButton obj={this.props.todo} objName={"todo"} />
 
         <div className="step-list">
           {
@@ -174,7 +174,7 @@ var TodoForm = React.createClass({
 
   render: function () {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form className="sidebar todo-form" onSubmit={this.handleSubmit}>
         <label>
           Title
           <input type="text" onChange={this.updateTitle} value={this.state.title} />
@@ -189,6 +189,20 @@ var TodoForm = React.createClass({
   }
 });
 
+var SidebarView = React.createClass({
+
+  render: function () {
+    return(
+      <section className="sidebar wrapper">
+        <TodoList />
+        <TodoForm />
+      </section>
+    );
+  }
+
+});
+
+
 $(document).ready(function () {
-  React.render(React.createElement(TodoList), document.getElementById("to-do"));
+  React.render(React.createElement(SidebarView), document.getElementById("to-do"));
 });
