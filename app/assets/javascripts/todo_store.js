@@ -4,7 +4,7 @@
   var _todos = [];
   var _callbacks = [];
 
-  TodoStore.changed = function(){
+  TodoStore.changed = function () {
     _callbacks.forEach(function(callback){
       callback();
     });

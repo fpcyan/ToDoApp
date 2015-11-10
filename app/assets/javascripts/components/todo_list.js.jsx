@@ -53,7 +53,7 @@ var TodoListItem = React.createClass({
     return(
       <div className="list-item">
         <div className="list-item-title" onClick={this.changeDetails}>{this.props.todo.title}</div>
-        <DoneButton todo={this.props.todo} />
+        <DoneButton obj={this.props.todo} objName={"todo"} />
         {details}
       </div>
     );
@@ -61,6 +61,23 @@ var TodoListItem = React.createClass({
 });
 
 var ItemDetailView = React.createClass({
+  getInitialState: function () {
+
+    return ({ stepList: StepStore.all(this.props.todo.id) });
+  },
+
+  stepListChanged: function () {
+    this.setState ({ stepList: StepStore.all(this.props.todo.id) });
+  },
+
+  componentDidMount: function () {
+    StepStore.addChangedHandler(this.stepListChanged);
+    StepStore.fetch(this.props.todo.id);
+  },
+
+  componentWillUnmount: function () {
+    StepStore.removeChangedHandler(this.stepListChanged);
+  },
 
   handleDestroy: function (e) {
     e.preventDefault();
@@ -68,10 +85,26 @@ var ItemDetailView = React.createClass({
   },
 
   render: function () {
+
     return(
       <div>
         <div className="list-item-body">{this.props.todo.body}</div>
         <button onClick={this.handleDestroy}>Delete Item</button>
+
+        <div className="step-list">
+          {
+            this.state.stepList.map( function (step) {
+              return(
+                <span key={step.id}>
+                  <article className="step-item">
+                    {step.content}
+                  </article>
+                  <DoneButton obj={step} objName="step" />
+                </span>
+              );
+            })
+          }
+        </div>
       </div>
     );
   }
@@ -81,13 +114,17 @@ var DoneButton = React.createClass({
 
   handleDone: function (e) {
     e.preventDefault();
-    TodoStore.toggleDone(this.props.todo.id);
+    if (this.props.objName === "todo"){
+      TodoStore.toggleDone(this.props.obj.id);
+    } else {
+      StepStore.toggleDone(this.props.obj.id, this.props.obj.todo_id);
+    }
 
   },
 
   render: function () {
+    var text = (this.props.obj.done) ? "Undo" : "Done";
 
-    var text = (this.props.todo.done) ? "Undo" : "Done";
     return (
       <div>
         <button onClick={this.handleDone}>{ text }</button>
