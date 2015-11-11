@@ -14,7 +14,7 @@
  *= require_self
  */
 
-html, head, body, div, section, h2, button, form, input, span, article, label {
+html, head, body, div, section, h1, h2, h3, h4, span, article, label {
   font: inherit;
   color: 0;
   text-decoration: inherit;
@@ -29,4 +29,81 @@ html, head, body, div, section, h2, button, form, input, span, article, label {
   display: block
   content: "";
   clear: both;
+}
+
+body {
+  font-family: sans-serif;
+  background: lightgrey;
+}
+
+.wrapper {
+  display: block;
+  position: absolute;
+
+  width: 400px;
+  height: 100%;
+  padding: 30px;
+
+  border-right: 5px solid black;
+  border-style: inset;
+
+  background: darkgreen;
+
+}
+.sidebar > * {
+  display: block;
+  position: relative:
+  width: 100%;
+  height: auto;
+  padding: 0 20px 10px 20px;
+  text-shadow: 0 0 10px black;
+  color: white;
+}
+
+.main {
+  display: block;
+  position: absolute;
+  background: lightgrey;
+  color: black;
+  text-shadow: none;
+
+  width: 600px;
+  height: auto;
+
+  left: 115%;
+  top: 0;
+  padding: 30px;
+  text-align: center;
+
+}
+.list-info {
+  border: 2px solid black;
+  padding: 10px;
+  border-radius: 10px;
+
+}
+
+.main .list-item-title {
+  position: relative:
+  width: 35%;
+  font-size: 24px;
+  left: 50%;
+  margin: 20px;
+}
+
+.list-item-body {
+  position: relative;
+  width: 35%;
+  text-align: left;
+  left: 10px;
+  margin: 30px 0;
+}
+.step-item-list {
+  width: 50%;
+}
+.step {
+  float: left;
+  position: relative;
+  width: 50%;
+  text-align: left;
 }

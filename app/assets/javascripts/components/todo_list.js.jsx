@@ -3,7 +3,9 @@ var SidebarView = React.createClass({
   render: function () {
     return(
       <section className="sidebar wrapper">
+        <h1>To Do:</h1>
         <TopicLists />
+        <h4>Add To Dos</h4>
         <TodoForm />
       </section>
     );
@@ -76,13 +78,15 @@ var TodoListItem = React.createClass({
   },
 
   render: function() {
-    var details;
+    var details, klass;
+    klass = "list-item-title";
     if (this.state.detail) {
       details = <MainView todo={this.props.todo}/>;
+      klass = "list-item-title details";
     }
     return(
       <div className="list-item">
-        <div className="list-item-title" onClick={this.changeDetails}>{this.props.todo.title}</div>
+        <div className={klass} onClick={this.changeDetails}>{this.props.todo.title}</div>
         <DoneButton obj={this.props.todo} objName={"todo"} />
 
         {details}
@@ -131,25 +135,28 @@ var MainView = React.createClass({
 
     return(
       <div className="main">
-        <div className="list-item-title" onClick={this.changeDetails}>{this.props.todo.title}</div>
-        <div className="list-item-body">{this.props.todo.body}</div>
+        <article className="list-info">
+          Goal:
+          <div className="list-item-title" onClick={this.changeDetails}>{this.props.todo.title}</div>
+          <div className="list-item-body">{this.props.todo.body}</div>
+            <div>
+              {
+                this.state.stepList.map( function (step) {
+                  return(
+                      <span className="step-item-list group" key={step.id}>
+                        <article className="step">
+                          {step.content}
+                        </article>
+                        <DoneButton obj={step} className="step" objName="step" />
+                      </span>
+                  );
+                })
+              }
+            </div>
+        </article>
         <button onClick={this.handleListItemDestroy}>Delete Item</button>
         <DoneButton obj={this.props.todo} objName={"todo"} />
 
-        <div className="step-list">
-          {
-            this.state.stepList.map( function (step) {
-              return(
-                <span key={step.id}>
-                  <article className="step-item">
-                    {step.content}
-                  </article>
-                  <DoneButton obj={step} objName="step" />
-                </span>
-              );
-            })
-          }
-        </div>
         <form onSubmit={this.handleStepSubmit} className="step-form">
           <input type="text" onInput={this.handleStepContentInput} value={this.state.stepContent} />
           <button>Add Step</button>
@@ -206,7 +213,7 @@ var TodoForm = React.createClass({
 
   handleSubmit: function (e) {
     e.preventDefault();
-    TodoStore.create({topic: this.state.topic, title: this.state.title, body: this.state.body, done: false});
+    TodoStore.create({title: this.state.title, body: this.state.body, done: false});
     this.setState({ title: "", body: "", topic: "" });
   },
 
@@ -225,7 +232,7 @@ var TodoForm = React.createClass({
           Body
           <input type="text" onChange={this.updateBody} value={this.state.body} />
         </label>
-        <button>Add Todo</button>
+        <button>Add</button>
       </form>
     );
   }
