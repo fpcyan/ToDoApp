@@ -1,7 +1,8 @@
 "use strict";
 (function(root){
   var TodoStore = root.TodoStore = {};
-  var _todos = [];
+  var _topics = [];
+  var _todos = {};
   var _callbacks = [];
 
   TodoStore.changed = function () {
@@ -20,8 +21,12 @@
     });
   };
 
+  TodoStore.allTopics = function () {
+    return _topics;
+  };
+
   TodoStore.all = function () {
-    return _todos.slice();
+    return _todos;
   };
 
   TodoStore.fetch = function () {
@@ -30,7 +35,18 @@
       type: 'GET',
       dataType: 'json',
       success: function (data) {
-        _todos = data;
+        data.forEach( function(obj) {
+          if (typeof(_todos[obj.topic]) === "undefined") {
+            (_todos[obj.topic] = [obj]);
+          } else {
+            _todos[obj.topic].push(obj);
+          }
+
+
+          if (_topics.indexOf(obj.topic) === -1) {
+           _topics.push(obj.topic);
+          }
+        });
         TodoStore.changed();
       }
     });
@@ -43,16 +59,28 @@
       dataType: 'json',
       data: { todo: todo },
       success: function (data) {
-        _todos.push(data);
+        if (typeof(_todos[data.topic]) === "undefined") {
+          _todos[data.topic] = [];
+        }
+
+        _todos[data.topic].push(data);
         TodoStore.changed();
       }
     });
   };
 
   TodoStore.destroy = function (id) {
-    var toRemove = _todos.filter( function(todo) {
-      return todo.id === id;
+    var toRemove;
+    _topics.forEach( function (topic) {
+      var eachRemove = _todos[topic].filter( function(todo) {
+        return todo.id === id;
+      });
+
+      if (eachRemove.length > 0) {
+        toRemove = eachRemove;
+      }
     });
+
     var toDo = toRemove[0];
     if (toRemove.length > 0) {
       $.ajax({
@@ -60,8 +88,8 @@
         type: 'DELETE',
         dataType: 'json',
         success: function (data) {
-          var idx = _todos.indexOf(toDo);
-          _todos.splice(idx, 1);
+          var idx = _todos[data.topic].indexOf(toDo);
+          _todos[data.topic].splice(idx, 1);
           TodoStore.changed();
         }
       });
@@ -69,9 +97,17 @@
   };
 
   TodoStore.toggleDone = function(id) {
-    var toUpdate = _todos.filter( function(todo) {
-      return todo.id === id;
+    var toUpdate;
+    _topics.forEach( function (topic) {
+      var eachUpdate = _todos[topic].filter( function(todo) {
+        return todo.id === id;
+      });
+
+      if (eachUpdate.length > 0) {
+        toUpdate = eachUpdate;
+      }
     });
+    
     var toDo = toUpdate[0];
     $.ajax({
       url: '/api/todos/' + id,

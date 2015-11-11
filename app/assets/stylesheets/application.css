@@ -13,3 +13,20 @@
  *= require_tree .
  *= require_self
  */
+
+html, head, body, div, section, h2, button, form, input, span, article, label {
+  font: inherit;
+  color: 0;
+  text-decoration: inherit;
+  background: transparent;
+
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.group: after {
+  display: block
+  content: "";
+  clear: both;
+}

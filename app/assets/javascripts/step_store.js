@@ -24,7 +24,7 @@
     if (typeof(_steps[todoId]) === "undefined") {
       _steps[todoId] = [];
     }
-    return _steps[todoId];
+    return _steps[todoId].slice();
   };
 
   StepStore.fetch = function (todoId) {

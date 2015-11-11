@@ -1,11 +1,23 @@
-var TodoList = React.createClass({
+var SidebarView = React.createClass({
 
+  render: function () {
+    return(
+      <section className="sidebar wrapper">
+        <TopicLists />
+        <TodoForm />
+      </section>
+    );
+  }
+
+});
+
+var TopicLists = React.createClass({
   getInitialState: function () {
-    return ({ todoList: TodoStore.all() });
+    return ({ todoList: TodoStore.all(), topics: TodoStore.allTopics() });
   },
 
   todoListChanged: function () {
-    this.setState ({ todoList: TodoStore.all() });
+    this.setState ({ todoList: TodoStore.all(), topics: TodoStore.allTopics() });
   },
 
   componentDidMount: function () {
@@ -19,11 +31,32 @@ var TodoList = React.createClass({
   },
 
   render: function () {
+
+    return(
+      <div className="sidebar topic-list">
+        {
+          this.state.topics.map( function (topic) {
+            return(
+              <div key={topic}>
+                <h2 className ="topic">{topic}</h2>
+                <TodoList list={this.state.todoList[topic]} />
+              </div>
+            );
+          }.bind(this))
+        }
+      </div>
+    );
+  }
+});
+
+var TodoList = React.createClass({
+
+  render: function () {
     return (
       <div className="sidebar todo-list">
         {
-          this.state.todoList.map( function (todo) {
-            return <TodoListItem key={todo.title} todo={todo} />;
+          this.props.list.map( function (todo) {
+            return <TodoListItem key={todo.id} todo={todo} />;
           })
         }
       </div>
@@ -152,8 +185,13 @@ var DoneButton = React.createClass({
 var TodoForm = React.createClass({
 
   getInitialState: function () {
-    return ({ title: "", body: "" });
+    return ({ title: "", body: "", topic: "" });
 
+  },
+
+  updateTopic: function (e) {
+    e.preventDefault();
+    this.setState({topic: e.currentTarget.value});
   },
 
   updateTitle: function (e) {
@@ -168,13 +206,17 @@ var TodoForm = React.createClass({
 
   handleSubmit: function (e) {
     e.preventDefault();
-    TodoStore.create({title: this.state.title, body: this.state.body, done: false});
-    this.setState({ title: "", body: "" });
+    TodoStore.create({topic: this.state.topic, title: this.state.title, body: this.state.body, done: false});
+    this.setState({ title: "", body: "", topic: "" });
   },
 
   render: function () {
     return (
       <form className="sidebar todo-form" onSubmit={this.handleSubmit}>
+        <label>
+          Topic
+          <input type="text" onChange={this.updateTopic} value={this.state.topic} placeholder="Groceries, Today, Homework..." />
+        </label>
         <label>
           Title
           <input type="text" onChange={this.updateTitle} value={this.state.title} />
@@ -183,23 +225,10 @@ var TodoForm = React.createClass({
           Body
           <input type="text" onChange={this.updateBody} value={this.state.body} />
         </label>
-        <button>Submit</button>
+        <button>Add Todo</button>
       </form>
     );
   }
-});
-
-var SidebarView = React.createClass({
-
-  render: function () {
-    return(
-      <section className="sidebar wrapper">
-        <TodoList />
-        <TodoForm />
-      </section>
-    );
-  }
-
 });
 
 
